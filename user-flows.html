@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Clinical System Design — Decision Pathways & Workflow Integration | Bhanu Prakash KN</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.6.1/mermaid.min.js"></script>
+  <style>
+    :root {
+      --navy: #0d1b2a;
+      --blue: #1b4f8a;
+      --accent: #2a9d8f;
+      --warn: #e76f51;
+      --ok: #2a9d8f;
+      --light: #f4f7fb;
+      --card: #fff;
+      --border: #dde4ef;
+      --text: #2d3436;
+      --muted: #5f6b7c;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--light); color: var(--text); }
+
+    header {
+      background: linear-gradient(135deg, var(--navy), var(--blue));
+      color: #fff; padding: 2.5rem 2rem 2rem; text-align: center;
+    }
+    header h1 { font-size: 1.8rem; margin-bottom: 0.4rem; }
+    header p { color: #90caf9; font-size: 0.95rem; max-width: 640px; margin: 0 auto; }
+
+    nav.toc {
+      background: var(--card); border-bottom: 1px solid var(--border);
+      display: flex; flex-wrap: wrap; gap: 0.5rem;
+      padding: 0.8rem 2rem; justify-content: center;
+    }
+    nav.toc a {
+      background: var(--light); border: 1px solid var(--border);
+      color: var(--blue); padding: 0.3rem 0.9rem; border-radius: 20px;
+      font-size: 0.82rem; text-decoration: none; transition: background 0.2s;
+    }
+    nav.toc a:hover { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+    .container { max-width: 1100px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
+
+    .project-block {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 12px; margin-bottom: 2.5rem; overflow: hidden;
+    }
+    .project-header {
+      background: var(--navy); color: #fff;
+      padding: 1.2rem 1.8rem;
+      display: flex; align-items: center; gap: 1rem;
+    }
+    .project-header .icon { font-size: 1.8rem; }
+    .project-header h2 { font-size: 1.2rem; margin-bottom: 0.2rem; }
+    .project-header .sub { color: #90caf9; font-size: 0.82rem; }
+
+    .design-pills {
+      display: flex; flex-wrap: wrap; gap: 0.5rem;
+      padding: 1rem 1.8rem 0;
+    }
+    .pill {
+      background: #eef5ff; color: var(--blue);
+      border: 1px solid #c3d9f7; border-radius: 20px;
+      padding: 0.25rem 0.75rem; font-size: 0.78rem; font-weight: 600;
+    }
+    .pill.green { background: #e8f8f5; color: #1a7a6e; border-color: #a8dfd9; }
+    .pill.orange { background: #fff3ee; color: #c0491a; border-color: #f7c3ad; }
+
+    .tabs {
+      display: flex; gap: 0; border-bottom: 1px solid var(--border);
+      padding: 0 1.8rem; margin-top: 1rem;
+    }
+    .tab-btn {
+      background: none; border: none; cursor: pointer;
+      padding: 0.6rem 1.1rem; font-size: 0.84rem; color: var(--muted);
+      border-bottom: 3px solid transparent; margin-bottom: -1px;
+      font-family: inherit; transition: color 0.15s;
+    }
+    .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); font-weight: 600; }
+    .tab-btn:hover { color: var(--blue); }
+
+    .tab-panel { display: none; padding: 1.5rem 1.8rem 1.8rem; }
+    .tab-panel.active { display: block; }
+
+    .diagram-wrap {
+      background: #fafbfc; border: 1px solid var(--border);
+      border-radius: 8px; padding: 1.2rem; overflow-x: auto;
+    }
+    .diagram-wrap .mermaid { min-width: 600px; }
+
+    .interface-logic {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 1rem; margin-top: 0.5rem;
+    }
+    .logic-card {
+      border: 1px solid var(--border); border-radius: 8px;
+      padding: 1rem; border-top: 4px solid var(--accent);
+    }
+    .logic-card h4 { font-size: 0.85rem; color: var(--navy); margin-bottom: 0.5rem; }
+    .logic-card ul { list-style: none; }
+    .logic-card ul li { font-size: 0.82rem; color: var(--muted); padding: 0.2rem 0; border-bottom: 1px solid #f0f0f0; }
+    .logic-card ul li:last-child { border-bottom: none; }
+    .logic-card ul li::before { content: "→ "; color: var(--accent); }
+
+    .output-consumer {
+      display: flex; flex-direction: column; gap: 0.7rem; margin-top: 0.5rem;
+    }
+    .consumer-row {
+      display: flex; align-items: flex-start; gap: 1rem;
+      background: var(--light); border-radius: 8px; padding: 0.8rem 1rem;
+    }
+    .consumer-icon { font-size: 1.4rem; flex-shrink: 0; }
+    .consumer-role { font-size: 0.85rem; font-weight: 700; color: var(--navy); }
+    .consumer-desc { font-size: 0.82rem; color: var(--muted); margin-top: 0.2rem; }
+
+    footer { background: var(--navy); color: #546e7a; text-align: center; padding: 1.2rem; font-size: 0.8rem; }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>Clinical System Design — Decision Pathways & Workflow Integration</h1>
+  <p>These diagrams document the clinical decision logic and data flow architecture embedded in three deployed clinical AI systems. They are grounded in published patent specifications, peer-reviewed methodology, and clinical deployment configurations — not retrospective UX design.</p>
+</header>
+
+<nav class="toc">
+  <a href="#stroke">🧠 Stroke CAD</a>
+  <a href="#brain">🧬 Brain Template</a>
+  <a href="#sarco">🏃 Sarcopenia AI</a>
+</nav>
+
+<div class="container">
+
+<!-- ===== PROJECT 1: STROKE CAD ===== -->
+<div class="project-block" id="stroke">
+  <div class="project-header">
+    <div class="icon">🧠</div>
+    <div>
+      <h2>Stroke Clinical AI System (iStrokeSuite)</h2>
+      <div class="sub">Emergency Room · Radiologist · Neurologist · Multi-module CAD · Deployed across Singapore health clusters</div>
+    </div>
+  </div>
+  <div class="design-pills">
+    <span class="pill">Grounded in patent specifications US8369598 · US8125223</span>
+    <span class="pill green">Clinical deployment across Singapore health clusters</span>
+    <span class="pill orange">Asian Innovation Award Finalist · RSNA Certificate of Merits</span>
+  </div>
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab(this,'stroke-flow')">System Flow</button>
+    <button class="tab-btn" onclick="switchTab(this,'stroke-decision')">Decision Pathway</button>
+    <button class="tab-btn" onclick="switchTab(this,'stroke-interface')">Output Routing</button>
+  </div>
+
+  <div class="tab-panel active" id="stroke-flow">
+    <div class="diagram-wrap">
+      <div class="mermaid">
+flowchart TD
+  A([🚨 Stroke Alert Triggered\nEmergency Room]) --> B[Patient admitted\nNeurological triage]
+  B --> C{Imaging ordered}
+  C -->|CT Scan| D[DICOM images\ntransferred to PACS]
+  C -->|MRI DWI| D
+  D --> E[iStrokeSuite\nauto-fetches study\nvia PACS integration]
+  E --> F[Pre-processing\nNoise reduction · skull-strip\nImage normalisation]
+  F --> G{AI Module Selection}
+  G -->|Haemorrhage| H[🔴 Haemorrhagic\nModule]
+  G -->|Ischaemia| I[🟡 Ischaemic\nModule]
+  G -->|Uncertain| J[⚖️ Probabilistic\nModule]
+  H --> K[Lesion segmented\nVolume computed\nRegion labelled]
+  I --> K
+  J --> K
+  K --> L[Output displayed\nColour-coded overlay\non original scan]
+  L --> M[👨‍⚕️ Radiologist\nreviews overlay\n+ confidence score]
+  M --> N{Radiologist decision}
+  N -->|Confirms AI finding| O[Auto-populate\nstructured report]
+  N -->|Modifies finding| P[Manual correction\nlogged for retraining]
+  O --> Q[Report sent to\nneurologist & ER physician]
+  P --> Q
+  Q --> R[🏥 Clinical team\nreceives triage-ready\ndecision support output]
+  R --> S([Treatment protocol\ninitiated])
+
+  style A fill:#d63031,color:#fff
+  style S fill:#00b894,color:#fff
+  style L fill:#0984e3,color:#fff
+  style M fill:#fdcb6e,color:#2d3436
+      </div>
+    </div>
+  </div>
+
+  <div class="tab-panel" id="stroke-decision">
+    <div class="diagram-wrap">
+      <div class="mermaid">
+flowchart TD
+  A([CT/MRI Study\nReceived]) --> B[Image Quality Check\nArtifact detection]
+  B -->|Poor quality| B2[🚫 Quality flag\nAlert to technician]
+  B -->|Pass| C{Haemorrhage\nDetector}
+  C -->|Positive signal| D[Haemorrhagic Stroke\nPipeline]
+  C -->|Negative| E{DWI Diffusion\nRestriction?}
+  D --> D1[Segment bleeding\nregion + volume]
+  D1 --> D2{Volume threshold}
+  D2 -->|> 30ml| D3[🔴 HIGH URGENCY\nSurgical review]
+  D2 -->|< 30ml| D4[🟡 MODERATE\nMonitor + medicate]
+  E -->|Yes| F[Ischaemic Stroke\nPipeline]
+  E -->|Ambiguous| G[Probabilistic\nModule]
+  F --> F1[DWI lesion\nsegmentation]
+  F1 --> F2[Territory mapping\nMCA / ACA / PCA?]
+  F2 --> F3{Time window\nestimation}
+  F3 -->|within 4.5h| F4[🟢 Thrombolysis\ncandidate flagged]
+  F3 -->|beyond 4.5h| F5[🟡 Thrombectomy\nevaluation]
+  G --> G1[Bayesian probability\nscore generated]
+  G1 --> G2[Confidence interval\ndisplayed to radiologist]
+  G2 --> G3[Radiologist\nmakes final call]
+  D3 & D4 & F4 & F5 & G3 --> Z[Structured report\ngenerated with\nclinical flags]
+  Z --> END([Output to clinical team])
+
+  style A fill:#636e72,color:#fff
+  style D3 fill:#d63031,color:#fff
+  style F4 fill:#00b894,color:#fff
+  style END fill:#0984e3,color:#fff
+      </div>
+    </div>
+  </div>
+
+  <div class="tab-panel" id="stroke-interface">
+    <div class="output-consumer">
+      <div class="consumer-row">
+        <div class="consumer-icon">🖥️</div>
+        <div>
+          <div class="consumer-role">PACS / Workstation Layer</div>
+          <div class="consumer-desc">DICOM input auto-routed to iStrokeSuite. AI overlay rendered directly on standard PACS viewer — no separate application launch needed. Designed to integrate into existing radiologist workflow without friction.</div>
+        </div>
+      </div>
+      <div class="consumer-row">
+        <div class="consumer-icon">👨‍⚕️</div>
+        <div>
+          <div class="consumer-role">Radiologist — Primary Output Consumer</div>
+          <div class="consumer-desc">Colour-coded lesion overlay with confidence score and volume measurement. One-click confirmation or correction. Optimised interpretability of outputs: result is a validated visual annotation, not raw data. Cognitive load reduced — radiologist confirms rather than searches.</div>
+        </div>
+      </div>
+      <div class="consumer-row">
+        <div class="consumer-icon">🧠</div>
+        <div>
+          <div class="consumer-role">Neurologist — Clinical Report Consumer</div>
+          <div class="consumer-desc">Structured report with stroke type, territory, volume, urgency flag, and treatment eligibility note. Delivered to neurologist workstation automatically on confirmation. Language calibrated to clinical decision vocabulary.</div>
+        </div>
+      </div>
+      <div class="consumer-row">
+        <div class="consumer-icon">🚨</div>
+        <div>
+          <div class="consumer-role">Emergency Physician — Triage Score Consumer</div>
+          <div class="consumer-desc">Single-screen triage output: stroke type · urgency level · time window flag. Designed for rapid consumption under emergency conditions — no scrolling, no ambiguity. Reduced cognitive load in decision-making at point of highest clinical stress.</div>
+        </div>
+      </div>
+      <div class="consumer-row">
+        <div class="consumer-icon">📊</div>
+        <div>
+          <div class="consumer-role">Audit / Quality System</div>
+          <div class="consumer-desc">All AI outputs, radiologist corrections, and timing data logged. Feeds retraining pipeline. Enables continuous improvement loop and supports clinical governance requirements.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ===== PROJECT 2: BRAIN TEMPLATE ===== -->
+<div class="project-block" id="brain">
+  <div class="project-header">
+    <div class="icon">🧬</div>
+    <div>
+      <h2>SG Normative Brain Template & Volumetry Atlas</h2>
+      <div class="sub">Neurologist · Geriatric Clinician · Population Health Researcher · NHIC Innovation Grant</div>
+    </div>
+  </div>
+  <div class="design-pills">
+    <span class="pill">Grounded in NHIC Innovation Grant specifications</span>
+    <span class="pill green">Population-normalised against Singapore cohort — corrects Western-atlas bias</span>
+    <span class="pill orange">Active at CIRC, NUS · Jan 2025–Present</span>
+  </div>
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab(this,'brain-flow')">System Flow</button>
+    <button class="tab-btn" onclick="switchTab(this,'brain-decision')">Decision Pathway</button>
+    <button class="tab-btn" onclick="switchTab(this,'brain-interface')">Output Routing</button>
+  </div>
+
+  <div class="tab-panel active" id="brain-flow">
+    <div class="diagram-wrap">
+      <div class="mermaid">
+flowchart TD
+  A([Patient MRI scan ordered\nClinical or research context]) --> B[T1-weighted MRI\nacquired at site]
+  B --> C[Image sent to\nSG Brain Template pipeline]
+  C --> D[Skull stripping\n& QC pass]
+  D --> E[Non-linear registration\nto SG Normative Template]
+  E --> F[Volumetric parcellation\n120 brain structures labelled]
+  F --> G[Age & sex normalisation\nagainst Singapore cohort]
+  G --> H{Comparison to\nSG normative atlas}
+  H -->|Within normal range| I[🟢 Normal ageing\nreport generated]
+  H -->|Below threshold| J[🟡 Atrophy signal\nin specific region]
+  H -->|Significant deviation| K[🔴 Pathological\nflag raised]
+  I & J & K --> L[Clinician receives\npersonalised volumetry report]
+  L --> M[👨‍⚕️ Neurologist / Geriatrician\nreviews region-specific\ndeviation chart]
+  M --> N[Clinical interpretation\nand intervention decision]
+  N --> O([Treatment plan / follow-up\nprotocol initiated])
+
+  style A fill:#636e72,color:#fff
+  style I fill:#00b894,color:#fff
+  style K fill:#d63031,color:#fff
+  style O fill:#0984e3,color:#fff
+      </div>
+    </div>
+  </div>
+
+  <div class="tab-panel" id="brain-decision">
+    <div class="diagram-wrap">
+      <div class="mermaid">
+flowchart TD
+  A([MRI Volume Received]) --> B[Template Registration\nQuality Score]
+  B -->|Score < 0.8| C[🚫 Registration failed\nRe-acquisition recommended]
+  B -->|Score ≥ 0.8| D[Volumetric extraction\n120 structures]
+  D --> E[Normalise by\nage · sex · TIV]
+  E --> F{Z-score vs\nSG normative atlas}
+  F -->|Z > -1| G[Normal\nNo action needed]
+  F -->|Z between -1 and -2| H{Region check\nWhich structures?}
+  H -->|Hippocampus / entorhinal| I[🟡 Early dementia\nwatch flag]
+  H -->|Frontal / temporal| J[🟡 FTD spectrum\nsuggested]
+  H -->|Thalamus / basal ganglia| K[🟡 Parkinson-related\natrophy pattern]
+  F -->|Z < -2| L[🔴 Significant atrophy\nClinical review required]
+  G & I & J & K & L --> M[Report with\nregion highlight map\n+ percentile chart]
+  M --> END([Clinician receives\npersonalised deviation profile])
+
+  style A fill:#636e72,color:#fff
+  style L fill:#d63031,color:#fff
+  style G fill:#00b894,color:#fff
+  style END fill:#0984e3,color:#fff
+      </div>
+    </div>
+  </div>
+
+  <div class="tab-panel" id="brain-interface">
+    <div class="output-consumer">
+      <div class="consumer-row">
+        <div class="consumer-icon">🧠</div>
+        <div>
+          <div class="consumer-role">Neurologist — Primary Consumer</div>
+          <div class="consumer-desc">Receives a deviation chart showing patient brain volumes compared to age/sex-matched Singapore normative range. Optimised interpretability of outputs — percentile visualisation, not raw mm³. Clinician immediately understands how unusual the finding is.</div>
+        </div>
+      </div>
+      <div class="consumer-row">
+        <div class="consumer-icon">👴</div>
+        <div>
+          <div class="consumer-role">Geriatric Clinician — Longitudinal Monitor</div>
+          <div class="consumer-desc">Serial scans compared against the same patient's prior baseline and the population trajectory. Cognitive decline tracked quantitatively — reduced reliance on subjective clinical impression alone.</div>
+        </div>
+      </div>
+      <div class="consumer-row">
+        <div class="consumer-icon">📈</div>
+        <div>
+          <div class="consumer-role">Population Health Researcher</div>
+          <div class="consumer-desc">Aggregated volumetry data from the Singapore cohort feeds back into the normative atlas, refining it over time. Designed as a self-improving reference system, not a static tool.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ===== PROJECT 3: SARCOPENIA ===== -->
+<div class="project-block" id="sarco">
+  <div class="project-header">
+    <div class="icon">🏃</div>
+    <div>
+      <h2>AI Framework: Sarcopenic Obesity & Metabolic Profiling</h2>
+      <div class="sub">Geriatrician · Dietitian · Population Health Team · Singapore Ageing-in-Place Programme</div>
+    </div>
+  </div>
+  <div class="design-pills">
+    <span class="pill">Grounded in published AI phenotyping methodology</span>
+    <span class="pill green">Multimodal data fusion — imaging · lab · functional</span>
+    <span class="pill orange">Singapore ageing-in-place clinical programme</span>
+  </div>
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab(this,'sarco-flow')">System Flow</button>
+    <button class="tab-btn" onclick="switchTab(this,'sarco-decision')">Decision Pathway</button>
+    <button class="tab-btn" onclick="switchTab(this,'sarco-interface')">Output Routing</button>
+  </div>
+
+  <div class="tab-panel active" id="sarco-flow">
+    <div class="diagram-wrap">
+      <div class="mermaid">
+flowchart TD
+  A([Elderly patient\nreferred for\nbody composition assessment]) --> B{Data collection\npathway}
+  B -->|Imaging| C[Abdominal MRI / CT\nBody composition scan]
+  B -->|Clinical| D[Lab results\nBlood metabolic panel]
+  B -->|Physical| E[Grip strength · Gait speed\nAnthropometrics]
+  C & D & E --> F[Multi-modal\nData fusion layer]
+  F --> G[Automated segmentation\nVisceral fat · Subcutaneous fat\nSkeletal muscle]
+  G --> H[Metabolic feature\nextraction\nInsulin resistance · Lipid profile]
+  H --> I[AI Phenotyping Engine\nClassify sarcopenic obesity subtype]
+  I --> J{Phenotype output}
+  J -->|Type 1: Low muscle\nhigh visceral fat| K[🔴 High metabolic risk\nIntervention urgent]
+  J -->|Type 2: Moderate\nmuscle loss| L[🟡 Moderate risk\nDiet + exercise plan]
+  J -->|Type 3: At-risk\nnormal current measures| M[🟢 Preventive care\nMonitoring plan]
+  K & L & M --> N[Personalised care plan\nauto-drafted for clinician review]
+  N --> O[👩‍⚕️ Geriatrician reviews\n+ dietitian co-review]
+  O --> P([Care plan finalised\n& shared with patient])
+
+  style A fill:#636e72,color:#fff
+  style K fill:#d63031,color:#fff
+  style M fill:#00b894,color:#fff
+  style P fill:#0984e3,color:#fff
+      </div>
+    </div>
+  </div>
+
+  <div class="tab-panel" id="sarco-decision">
+    <div class="diagram-wrap">
+      <div class="mermaid">
+flowchart TD
+  A([Multi-modal\ndata received]) --> B[Data completeness\ncheck]
+  B -->|Missing modality| C[⚠️ Flag incomplete\nRequest supplementary data]
+  B -->|Complete| D[Body composition\nsegmentation scores]
+  D --> E{Skeletal Muscle\nIndex SMI}
+  E -->|SMI < threshold| F[Sarcopenia confirmed]
+  E -->|SMI borderline| G[At-risk classification]
+  E -->|SMI normal| H[No sarcopenia]
+  F --> I{BMI + Visceral\nFat Area}
+  I -->|BMI > 25 + VFA > 100cm²| J[🔴 Sarcopenic Obesity\nHigh-risk phenotype]
+  I -->|Elevated VFA only| K[🟡 Metabolic Obesity\nModerate risk]
+  I -->|Normal| L[🟡 Sarcopenia only\nMuscle-focused intervention]
+  G --> M[Longitudinal\nmonitoring flag set]
+  H & M --> N[Preventive\ncare pathway]
+  J & K & L --> O[Personalised risk score\nwith intervention priority ranking]
+  O & N --> END([Care plan output\nto clinical team])
+
+  style A fill:#636e72,color:#fff
+  style J fill:#d63031,color:#fff
+  style N fill:#00b894,color:#fff
+  style END fill:#0984e3,color:#fff
+      </div>
+    </div>
+  </div>
+
+  <div class="tab-panel" id="sarco-interface">
+    <div class="output-consumer">
+      <div class="consumer-row">
+        <div class="consumer-icon">👩‍⚕️</div>
+        <div>
+          <div class="consumer-role">Geriatrician — Primary Consumer</div>
+          <div class="consumer-desc">Receives phenotype classification with body composition visualisation (colour-coded compartments) and risk score. Optimised interpretability of outputs — results are expressed in clinical terms (high/moderate/low risk + intervention priority), not model probabilities.</div>
+        </div>
+      </div>
+      <div class="consumer-row">
+        <div class="consumer-icon">🥗</div>
+        <div>
+          <div class="consumer-role">Dietitian — Intervention Planner</div>
+          <div class="consumer-desc">Receives body fat distribution breakdown and metabolic profile to design targeted nutritional intervention. Cognitive load reduced: automated care plan draft is provided for review, not a blank-page task.</div>
+        </div>
+      </div>
+      <div class="consumer-row">
+        <div class="consumer-icon">📋</div>
+        <div>
+          <div class="consumer-role">Population Health Team — Aggregate Insights</div>
+          <div class="consumer-desc">Cohort-level phenotype distribution enables national programme planning. Singapore's ageing-in-place teams receive de-identified aggregate phenotype reports to plan resource allocation.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+</div><!-- /container -->
+
+<footer>Bhanu Prakash KN · Clinical AI Engineer · Singapore · github.com/bhanuprakashkn</footer>
+
+<script>
+  mermaid.initialize({ startOnLoad: true, theme: 'default', flowchart: { curve: 'basis' } });
+
+  function switchTab(btn, panelId) {
+    const block = btn.closest('.project-block');
+    block.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    block.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById(panelId).classList.add('active');
+    // Re-render mermaid if needed
+    if (window.mermaid) mermaid.init(undefined, document.getElementById(panelId).querySelectorAll('.mermaid'));
+  }
+</script>
+</body>
+</html>

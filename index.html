@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bhanu Prakash KN — Clinical AI Engineer</title>
+  <style>
+    :root {
+      --navy: #0d1b2a;
+      --blue: #1b4f8a;
+      --accent: #2a9d8f;
+      --light: #f8f9fa;
+      --text: #2d3436;
+      --muted: #636e72;
+      --card: #ffffff;
+      --border: #e0e6ed;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      color: var(--text);
+      background: var(--light);
+      line-height: 1.65;
+    }
+
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    /* NAV */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: var(--navy);
+      padding: 0.8rem 2rem;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    nav .logo { color: #fff; font-weight: 700; font-size: 1rem; letter-spacing: 0.5px; }
+    nav ul { list-style: none; display: flex; gap: 1.5rem; }
+    nav ul li a { color: #cbd5e1; font-size: 0.88rem; transition: color 0.2s; }
+    nav ul li a:hover { color: var(--accent); text-decoration: none; }
+
+    /* HERO */
+    .hero {
+      background: linear-gradient(135deg, var(--navy) 0%, var(--blue) 100%);
+      color: #fff;
+      padding: 5rem 2rem 4rem;
+      text-align: center;
+    }
+    .hero h1 { font-size: 2.6rem; font-weight: 700; letter-spacing: -0.5px; }
+    .hero .title { font-size: 1.15rem; color: #90caf9; margin: 0.6rem 0 1.4rem; }
+    .hero .tagline {
+      max-width: 680px; margin: 0 auto 2rem;
+      font-size: 1.05rem; color: #b2d8f0; line-height: 1.7;
+    }
+    .hero .badges { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.6rem; margin-bottom: 2rem; }
+    .badge {
+      background: rgba(255,255,255,0.12);
+      border: 1px solid rgba(255,255,255,0.25);
+      color: #e0f0ff;
+      padding: 0.3rem 0.85rem;
+      border-radius: 20px;
+      font-size: 0.82rem;
+    }
+    .hero-cta { display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap; }
+    .btn {
+      padding: 0.65rem 1.5rem;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity 0.2s;
+      display: inline-block;
+    }
+    .btn:hover { opacity: 0.88; text-decoration: none; }
+    .btn-primary { background: var(--accent); color: #fff; }
+    .btn-outline { border: 2px solid rgba(255,255,255,0.6); color: #fff; }
+
+    /* STAT STRIP */
+    .stats {
+      background: var(--navy);
+      display: flex; flex-wrap: wrap; justify-content: center;
+      padding: 1.5rem 2rem; gap: 2rem;
+    }
+    .stat { text-align: center; color: #fff; }
+    .stat-num { font-size: 1.8rem; font-weight: 700; color: var(--accent); }
+    .stat-label { font-size: 0.78rem; color: #90a4ae; margin-top: 0.1rem; }
+
+    /* SECTIONS */
+    section { padding: 4rem 2rem; max-width: 1050px; margin: 0 auto; }
+    section h2 {
+      font-size: 1.7rem; color: var(--navy);
+      margin-bottom: 0.5rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 3px solid var(--accent);
+      display: inline-block;
+    }
+    section .section-intro {
+      color: var(--muted); font-size: 0.95rem; margin: 0.8rem 0 2rem;
+      max-width: 700px;
+    }
+
+    /* ABOUT */
+    .about-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1.5rem; }
+    .about-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.5rem;
+      border-top: 4px solid var(--accent);
+    }
+    .about-card h3 { font-size: 1rem; color: var(--navy); margin-bottom: 0.6rem; }
+    .about-card p { font-size: 0.88rem; color: var(--muted); }
+
+    /* PROJECTS */
+    .projects-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+    .project-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.5rem;
+      transition: box-shadow 0.2s;
+    }
+    .project-card:hover { box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
+    .project-icon { font-size: 1.8rem; margin-bottom: 0.6rem; }
+    .project-card h3 { font-size: 1rem; color: var(--navy); margin-bottom: 0.4rem; }
+    .project-card p { font-size: 0.86rem; color: var(--muted); margin-bottom: 0.8rem; }
+    .project-tags { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+    .tag {
+      background: #eef2ff; color: var(--blue);
+      padding: 0.15rem 0.6rem; border-radius: 12px;
+      font-size: 0.75rem; font-weight: 500;
+    }
+    .tag.outcome { background: #e8f8f5; color: #1a7a6e; }
+
+    /* SKILLS */
+    .skills-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1.2rem; }
+    .skill-group {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.2rem 1.4rem;
+    }
+    .skill-group h4 { font-size: 0.88rem; color: var(--accent); font-weight: 700; margin-bottom: 0.8rem; text-transform: uppercase; letter-spacing: 0.5px; }
+    .skill-list { list-style: none; }
+    .skill-list li { font-size: 0.85rem; color: var(--text); padding: 0.25rem 0; border-bottom: 1px solid #f0f0f0; }
+    .skill-list li:last-child { border-bottom: none; }
+
+    /* PATENTS */
+    .patent-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .patent-card {
+      background: var(--card);
+      border-left: 4px solid var(--accent);
+      border-radius: 6px;
+      padding: 1rem 1.2rem;
+    }
+    .patent-card .patent-num { font-size: 0.75rem; color: var(--accent); font-weight: 700; margin-bottom: 0.3rem; }
+    .patent-card p { font-size: 0.85rem; color: var(--text); }
+
+    /* TIMELINE */
+    .timeline { position: relative; padding-left: 1.8rem; }
+    .timeline::before {
+      content: ''; position: absolute; left: 0; top: 0; bottom: 0;
+      width: 3px; background: var(--accent); border-radius: 2px;
+    }
+    .tl-item { position: relative; margin-bottom: 1.8rem; }
+    .tl-item::before {
+      content: ''; position: absolute; left: -1.95rem; top: 0.35rem;
+      width: 12px; height: 12px;
+      background: var(--accent); border-radius: 50%;
+      border: 2px solid #fff;
+      box-shadow: 0 0 0 2px var(--accent);
+    }
+    .tl-year { font-size: 0.78rem; color: var(--accent); font-weight: 700; }
+    .tl-role { font-size: 0.95rem; color: var(--navy); font-weight: 600; }
+    .tl-org { font-size: 0.85rem; color: var(--muted); }
+
+    /* CONTACT */
+    .contact-section { background: var(--navy); color: #fff; padding: 3.5rem 2rem; text-align: center; }
+    .contact-section h2 { color: #fff; border-bottom-color: var(--accent); }
+    .contact-section p { color: #90caf9; margin: 1rem 0 2rem; max-width: 500px; margin-left: auto; margin-right: auto; }
+    .contact-links { display: flex; justify-content: center; gap: 1.5rem; flex-wrap: wrap; }
+    .contact-link {
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.2);
+      color: #fff;
+      padding: 0.7rem 1.5rem;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      transition: background 0.2s;
+    }
+    .contact-link:hover { background: rgba(255,255,255,0.18); text-decoration: none; }
+
+    /* FOOTER */
+    footer { background: #0a1520; color: #546e7a; text-align: center; padding: 1.2rem; font-size: 0.8rem; }
+
+    @media (max-width: 768px) {
+      .hero h1 { font-size: 1.8rem; }
+      .about-grid, .projects-grid, .patent-grid { grid-template-columns: 1fr; }
+      nav ul { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="logo">Bhanu Prakash KN</div>
+  <ul>
+    <li><a href="#about">About</a></li>
+    <li><a href="#circ">Current Work</a></li>
+    <li><a href="#projects">Projects</a></li>
+    <li><a href="#ux">System Design</a></li>
+    <li><a href="#skills">Skills</a></li>
+    <li><a href="#patents">Patents</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <h1>Bhanu Prakash KN</h1>
+  <div class="title">Clinical AI Engineer · Medical Imaging · Data Science</div>
+  <p class="tagline">
+    I build AI systems that clinicians trust and deploy — currently leading quantitative imaging and kinetic modelling platforms at CIRC NUS, with a foundation of deployed clinical AI spanning stroke, neuroimaging, and population health across Singapore.
+  </p>
+  <div class="badges">
+    <span class="badge">Medical Imaging AI</span>
+    <span class="badge">Radiomics</span>
+    <span class="badge">Clinical Decision Support</span>
+    <span class="badge">ML Pipeline Engineering</span>
+    <span class="badge">15 Patents Granted</span>
+    <span class="badge">Singapore PR</span>
+  </div>
+  <div class="hero-cta">
+    <a class="btn btn-primary" href="https://www.linkedin.com/in/bhanu-prakash-kn-b6b9314/" target="_blank">View LinkedIn</a>
+    <a class="btn btn-outline" href="#projects">See Projects</a>
+    <a class="btn btn-outline" href="mailto:bhanuprakash.kn@gmail.com">Get in Touch</a>
+  </div>
+</div>
+
+<!-- STATS STRIP -->
+<div class="stats">
+  <div class="stat"><div class="stat-num">40</div><div class="stat-label">Years of Experience</div></div>
+  <div class="stat"><div class="stat-num">15</div><div class="stat-label">Patents Granted</div></div>
+  <div class="stat"><div class="stat-num">45</div><div class="stat-label">Journal Publications</div></div>
+  <div class="stat"><div class="stat-num">200+</div><div class="stat-label">Students Mentored</div></div>
+  <div class="stat"><div class="stat-num">S$1M+</div><div class="stat-label">Grants Secured</div></div>
+  <div class="stat"><div class="stat-num">5</div><div class="stat-label">Patents Licensed</div></div>
+</div>
+
+<!-- ABOUT -->
+<section id="about">
+  <h2>About Me</h2>
+  <p class="section-intro">
+    What makes my profile different from a typical data scientist or researcher: I operate at the
+    intersection of clinical medicine, engineering, and regulatory practice simultaneously.
+  </p>
+  <div class="about-grid">
+    <div class="about-card">
+      <h3>🏥 Clinical Workflow Depth</h3>
+      <p>I have worked side-by-side with radiologists, neurologists, cardiologists, and emergency physicians to co-design tools that fit real clinical workflows — not just supply models that clinicians can't use.</p>
+    </div>
+    <div class="about-card">
+      <h3>⚙️ Engineering Pipeline Owner</h3>
+      <p>From DICOM acquisition through feature extraction, model training, validation, and deployment — I own the full stack. I have also managed HPC infrastructure, multi-site data pipelines, and IT systems for national research programmes.</p>
+    </div>
+    <div class="about-card">
+      <h3>📋 Regulatory-Grade Thinking</h3>
+      <p>With 15 granted patents (5 licensed), NHIC and A*STAR grant frameworks, and contribution to commercial clinical products generating revenue, I understand what moves an algorithm from prototype to IP-protected deployable system.</p>
+    </div>
+  </div>
+</section>
+
+<!-- CURRENT WORK AT CIRC -->
+<section id="circ">
+  <h2>Current Work at CIRC NUS <span style="font-size:0.75rem; font-weight:400; color:#666;">Jan 2025 – Present</span></h2>
+  <p class="section-intro">
+    <strong>Lead, Quantitative Imaging &amp; Data-Driven Modelling</strong> — Clinical Imaging Research Centre (CIRC), National University of Singapore.<br>
+    Over the past year, our team has built three research-grade, clinically oriented AI platforms that translate quantitative imaging into actionable clinical insight.
+  </p>
+  <div class="projects-grid">
+
+    <div class="project-card">
+      <div class="project-icon">🔬</div>
+      <h3>FUSION — Framework for Unified Spatial Integration of ONcologic Imaging</h3>
+      <p>End-to-end platform for joint PET/CT and PET/MR analysis in oncology. Automated tumour segmentation and co-registration across multimodal volumes, with quantitative lesion characterisation — SUV metrics, volumetrics, and spatial distribution maps — for longitudinal treatment response assessment.</p>
+      <div class="project-tags">
+        <span class="tag">PET/CT · PET/MR</span>
+        <span class="tag">Tumour Segmentation</span>
+        <span class="tag">Multimodal Registration</span>
+        <span class="tag">SUV Quantification</span>
+        <span class="tag outcome">✓ Operational at CIRC NUS</span>
+      </div>
+    </div>
+
+    <div class="project-card">
+      <div class="project-icon">🧬</div>
+      <h3>COMPAS — COMPosition &amp; Phenotype Analysis System</h3>
+      <p>Automated body composition quantification from CT and MRI: visceral and subcutaneous fat, skeletal muscle, intra-muscular (IMAT) and inter-muscular fat (EMAT). Phenotype classification pipeline for metabolic profiling at population scale, designed for sarcopenia and oncology cohort studies.</p>
+      <div class="project-tags">
+        <span class="tag">Body Composition AI</span>
+        <span class="tag">VAT · SAT · IMAT · EMAT</span>
+        <span class="tag">Semantic Segmentation</span>
+        <span class="tag">Radiomics</span>
+        <span class="tag outcome">✓ Deployed in Cohort Studies</span>
+      </div>
+    </div>
+
+    <div class="project-card">
+      <div class="project-icon">🧠</div>
+      <h3>NEXUS — Neuro-Cardiac EXplorer for Dynamic Scanning</h3>
+      <p>Full kinetic modelling pipeline for dynamic PET data: time-activity curve (TAC) extraction, Patlak and Logan graphical analyses, and parametric map generation (Ki maps, DVR, net influx rate). Integrates with NEURODESK (Queensland Brain Institute) for standardised neuro and cardiac dynamic PET workflows.</p>
+      <div class="project-tags">
+        <span class="tag">Dynamic PET</span>
+        <span class="tag">Kinetic Modelling</span>
+        <span class="tag">Patlak · Logan</span>
+        <span class="tag">NEURODESK Integration</span>
+        <span class="tag outcome">✓ Operational at CIRC NUS</span>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- PROJECTS -->
+<section id="projects">
+  <h2>Flagship Projects <span style="font-size:0.75rem; font-weight:400; color:#666;">A*STAR · 2003–2024</span></h2>
+  <p class="section-intro">Every project below was validated in a clinical or research environment. These are not demos.</p>
+  <div class="projects-grid">
+
+    <div class="project-card">
+      <div class="project-icon">🧠</div>
+      <h3>Stroke Clinical AI System (iStrokeSuite)</h3>
+      <p>End-to-end stroke CAD covering ischemic, hemorrhagic, probabilistic, and emergency room workflows. Automated segmentation of infarcted brain tissue from DWI/CT volumes, integrated with clinical PACS. Deployed across Singapore health clusters.</p>
+      <div class="project-tags">
+        <span class="tag">DWI Segmentation</span>
+        <span class="tag">Atlas Integration</span>
+        <span class="tag">PACS Deployment</span>
+        <span class="tag outcome">✓ Clinical Deployment</span>
+        <span class="tag outcome">✓ Asian Innovation Award Finalist</span>
+      </div>
+    </div>
+
+    <div class="project-card">
+      <div class="project-icon">🧬</div>
+      <h3>SG Normative Brain Template & Volumetry Atlas</h3>
+      <p>Deep learning framework to construct a Singapore-specific ageing brain reference template — the first population-normalised volumetry atlas for an Asian cohort. Corrects the systematic bias in Western-trained clinical tools applied to Asian patients.</p>
+      <div class="project-tags">
+        <span class="tag">Deep Learning</span>
+        <span class="tag">Brain Segmentation</span>
+        <span class="tag">Population Health</span>
+        <span class="tag outcome">✓ NHIC Innovation Grant</span>
+        <span class="tag outcome">✓ Active at NUS CIRC</span>
+      </div>
+    </div>
+
+    <div class="project-card">
+      <div class="project-icon">🔬</div>
+      <h3>Schizophrenia Subtype Classification</h3>
+      <p>ML pipeline for classification and subtyping of schizophrenia from structural and functional MRI. Unsupervised clustering identified biologically meaningful patient subgroups enabling personalised treatment pathways.</p>
+      <div class="project-tags">
+        <span class="tag">SVM / Clustering</span>
+        <span class="tag">Neuroimaging Features</span>
+        <span class="tag">Clinical Translation</span>
+        <span class="tag outcome">✓ Peer-Reviewed Publication</span>
+      </div>
+    </div>
+
+    <div class="project-card">
+      <div class="project-icon">🏃</div>
+      <h3>AI Framework: Sarcopenic Obesity & Metabolic Profiling</h3>
+      <p>Multimodal clinical AI pipeline for automated body composition analysis and metabolic phenotyping in Singapore's geriatric population. Designed for integration with national ageing-in-place clinical programmes.</p>
+      <div class="project-tags">
+        <span class="tag">Multi-modal Fusion</span>
+        <span class="tag">Geriatric AI</span>
+        <span class="tag">Body Composition</span>
+        <span class="tag outcome">✓ Clinical Integration</span>
+      </div>
+    </div>
+
+    <div class="project-card">
+      <div class="project-icon">🫀</div>
+      <h3>Multi-site Cardiac MRI Analysis Application</h3>
+      <p>Cross-site cardiac MRI application supporting diverse study types and acquisition protocols. Standardised workflows across research and clinical sites for reliable multi-centre cardiac studies.</p>
+      <div class="project-tags">
+        <span class="tag">Cardiac Segmentation</span>
+        <span class="tag">Multi-site Pipeline</span>
+        <span class="tag">DICOM Compliance</span>
+        <span class="tag outcome">✓ Multi-centre Deployment</span>
+      </div>
+    </div>
+
+    <div class="project-card">
+      <div class="project-icon">📐</div>
+      <h3>Brain Atlas Landmark Registration</h3>
+      <p>Novel anatomical landmark detection for anterior/posterior commissures with geometrical fitting for improved atlas alignment. Adopted in multi-centre neuroimaging studies and protected through multiple international patents.</p>
+      <div class="project-tags">
+        <span class="tag">Landmark Detection</span>
+        <span class="tag">Atlas Registration</span>
+        <span class="tag">Multi-centre Adoption</span>
+        <span class="tag outcome">✓ US8311359 · US7783090</span>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- SYSTEM DESIGN SECTION -->
+<section id="ux">
+  <h2>Clinical System Design</h2>
+  <p class="section-intro">
+    A clinical AI system that does not integrate into how clinicians work does not get used.
+    The clinical decision logic, data flow architecture, and output routing for three deployed
+    projects are documented below — drawn from patent specifications and published methodology.
+  </p>
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1.5rem">
+
+    <div class="project-card" style="border-top:4px solid var(--accent)">
+      <div class="project-icon">🔀</div>
+      <h3>Clinical Decision Pathways & System Flows</h3>
+      <p>The decision logic and data flow architecture embedded in three deployed clinical AI systems — Stroke CAD, SG Brain Atlas, and Sarcopenia AI. Each diagram is grounded in the patent specifications and peer-reviewed methodology of the actual system, not retrospective UX design.</p>
+      <div class="project-tags" style="margin-top:0.8rem">
+        <span class="tag">Stroke CAD</span>
+        <span class="tag">Brain Atlas</span>
+        <span class="tag">Sarcopenia AI</span>
+        <span class="tag outcome">✓ Grounded in published patents & papers</span>
+      </div>
+      <a href="user-flows.html" style="display:inline-block;margin-top:1rem;background:var(--accent);color:#fff;padding:0.4rem 1rem;border-radius:6px;font-size:0.85rem;text-decoration:none">View System Design →</a>
+    </div>
+
+  </div>
+</section>
+
+<!-- SKILLS -->
+<section id="skills">
+  <h2>Technical Skills</h2>
+  <p class="section-intro">Core competencies spanning ML, medical imaging, deployment, and clinical systems engineering.</p>
+  <div class="skills-grid">
+    <div class="skill-group">
+      <h4>Machine Learning & AI</h4>
+      <ul class="skill-list">
+        <li>Deep Learning — CNN, U-Net, ResNet</li>
+        <li>Classical ML — SVM, Random Forest, Ensemble</li>
+        <li>Unsupervised Learning & Clustering</li>
+        <li>Radiomics Feature Engineering</li>
+        <li>Model Validation & Benchmarking</li>
+      </ul>
+    </div>
+    <div class="skill-group">
+      <h4>Medical Imaging</h4>
+      <ul class="skill-list">
+        <li>MRI Analysis (structural, functional, diffusion)</li>
+        <li>CT Image Analysis</li>
+        <li>Image Segmentation</li>
+        <li>Atlas Registration Methods</li>
+        <li>ITK · SimpleITK · FSL · SPM · FreeSurfer</li>
+      </ul>
+    </div>
+    <div class="skill-group">
+      <h4>Programming & Tools</h4>
+      <ul class="skill-list">
+        <li>Python · MATLAB · R</li>
+        <li>SQL · Pandas · NumPy · SciPy</li>
+        <li>TensorFlow · PyTorch · Scikit-learn</li>
+        <li>Jupyter · Git · Linux / HPC</li>
+        <li>Docker · AWS · REST APIs</li>
+      </ul>
+    </div>
+    <div class="skill-group">
+      <h4>Clinical & Regulatory</h4>
+      <ul class="skill-list">
+        <li>Clinical Workflow Design</li>
+        <li>DICOM · HL7 · PACS Integration</li>
+        <li>IP Strategy & Patent Filing</li>
+        <li>Grant Writing (NHIC · A*STAR · NRF)</li>
+        <li>Clinical Trial Data Management</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- PATENTS -->
+<section id="patents">
+  <h2>Patents & Publications</h2>
+  <p class="section-intro">15 patents granted across USA, Europe, Singapore, and PCT. 5 licensed to industry. 45 peer-reviewed journal publications.</p>
+  <div class="patent-grid">
+    <div class="patent-card">
+      <div class="patent-num">US8369598 · EP2089851 · SG151426</div>
+      <p>Identifying pathological regions (ischemic stroke) in MRI scans — core Stroke CAD technology</p>
+    </div>
+    <div class="patent-card">
+      <div class="patent-num">US8125223 · SG163063</div>
+      <p>Segmenting infarct in diffusion weighted imaging volumes — stroke segmentation pipeline</p>
+    </div>
+    <div class="patent-card">
+      <div class="patent-num">US8311359 · US8045775 · SG150019</div>
+      <p>Brain atlas registration via reference ellipse alignment and commissure landmark localisation</p>
+    </div>
+    <div class="patent-card">
+      <div class="patent-num">US7783090 · SG147488</div>
+      <p>Automatic detection of anterior and posterior commissures in MR volume data</p>
+    </div>
+    <div class="patent-card">
+      <div class="patent-num">US7783132 · SG137145</div>
+      <p>Atlas-assisted interpretation of MR diffusion and perfusion images</p>
+    </div>
+    <div class="patent-card">
+      <div class="patent-num">PCT/SG2019/050160</div>
+      <p>Method and system for fat compartment segmentation in abdominal MRI</p>
+    </div>
+    <div class="patent-card">
+      <div class="patent-num">SG183115</div>
+      <p>Mobile-based framework for clinical emergency decision support</p>
+    </div>
+    <div class="patent-card">
+      <div class="patent-num">SBIC/Z/11595 (Filed)</div>
+      <p>Deep learning-based segmentation of stroke regions in CT scans</p>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<div class="contact-section" id="contact">
+  <h2>Let's Work Together</h2>
+  <p>
+    I am open to Data Science Engineering roles, clinical AI collaborations, and healthcare technology partnerships in Singapore and internationally.
+  </p>
+  <div class="contact-links">
+    <a class="contact-link" href="mailto:bhanuprakash.kn@gmail.com">
+      ✉ bhanuprakash.kn@gmail.com
+    </a>
+    <a class="contact-link" href="https://www.linkedin.com/in/bhanu-prakash-kn-b6b9314/" target="_blank">
+      🔗 LinkedIn Profile
+    </a>
+    <a class="contact-link" href="https://github.com/bhanuprakashkn" target="_blank">
+      ⌥ GitHub
+    </a>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <p>Bhanu Prakash KN · Singapore · bhanuprakash.kn@gmail.com · Open to opportunities</p>
+</footer>
+
+</body>
+</html>
